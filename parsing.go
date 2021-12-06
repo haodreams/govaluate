@@ -64,6 +64,7 @@ func readToken(stream *lexerStream, state lexerState, functions map[string]Expre
 	var found bool
 	var completed bool
 	var err error
+	funcName := ""
 
 	// numeric is 0-9, or . or 0x followed by digits
 	// string starts with '
@@ -173,6 +174,7 @@ func readToken(stream *lexerStream, state lexerState, functions map[string]Expre
 			if found {
 				kind = FUNCTION
 				tokenValue = function
+				funcName = tokenString
 			}
 
 			// accessor?
@@ -284,6 +286,7 @@ func readToken(stream *lexerStream, state lexerState, functions map[string]Expre
 
 	ret.Kind = kind
 	ret.Value = tokenValue
+	ret.FuncName = funcName
 
 	return ret, nil, (kind != UNKNOWN)
 }

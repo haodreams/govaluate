@@ -229,7 +229,7 @@ func (this EvaluableExpression) evaluateStage(stage *evaluationStage, parameters
 		}
 	}
 
-	return stage.operator(left, right, parameters)
+	return stage.operator(left, right, parameters, stage.funcName)
 }
 
 func typeCheck(check stageTypeCheck, value interface{}, symbol OperatorSymbol, format string) error {

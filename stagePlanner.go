@@ -311,7 +311,7 @@ func planFunction(stream *tokenStream) (*evaluationStage, error) {
 	}
 
 	return &evaluationStage{
-
+		funcName:        token.FuncName, //runtime.FuncForPC(reflect.ValueOf(token.Value).Pointer()).Name(), //fmt.Sprint(token.Value),
 		symbol:          FUNCTIONAL,
 		rightStage:      rightStage,
 		operator:        makeFunctionStage(token.Value.(ExpressionFunction)),
@@ -648,10 +648,16 @@ func mirrorStageSubtree(stages []*evaluationStage) {
 func elideLiterals(root *evaluationStage) *evaluationStage {
 
 	if root.leftStage != nil {
+		if root.leftStage.funcName == "" {
+			root.leftStage.funcName = root.funcName
+		}
 		root.leftStage = elideLiterals(root.leftStage)
 	}
 
 	if root.rightStage != nil {
+		if root.rightStage.funcName == "" {
+			root.rightStage.funcName = root.funcName
+		}
 		root.rightStage = elideLiterals(root.rightStage)
 	}
 
@@ -686,12 +692,12 @@ func elideStage(root *evaluationStage) *evaluationStage {
 
 	// both sides are values, get their actual values.
 	// errors should be near-impossible here. If we encounter them, just abort this optimization.
-	leftValue, err = root.leftStage.operator(nil, nil, nil)
+	leftValue, err = root.leftStage.operator(nil, nil, nil, "")
 	if err != nil {
 		return root
 	}
 
-	rightValue, err = root.rightStage.operator(nil, nil, nil)
+	rightValue, err = root.rightStage.operator(nil, nil, nil, "")
 	if err != nil {
 		return root
 	}
@@ -712,7 +718,7 @@ func elideStage(root *evaluationStage) *evaluationStage {
 	}
 
 	// pre-calculate, and return a new stage representing the result.
-	result, err = root.operator(leftValue, rightValue, nil)
+	result, err = root.operator(leftValue, rightValue, nil, "")
 	if err != nil {
 		return root
 	}

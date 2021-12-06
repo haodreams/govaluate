@@ -6,8 +6,8 @@ type sanitizedParameters struct {
 	orig Parameters
 }
 
-func (p sanitizedParameters) Get(key string) (interface{}, error) {
-	value, err := p.orig.Get(key)
+func (p sanitizedParameters) Get(key, funcName string) (interface{}, error) {
+	value, err := p.orig.Get(key, funcName)
 	if err != nil {
 		return nil, err
 	}

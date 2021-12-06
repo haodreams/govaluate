@@ -14,12 +14,12 @@ type Parameters interface {
 		Get gets the parameter of the given name, or an error if the parameter is unavailable.
 		Failure to find the given parameter should be indicated by returning an error.
 	*/
-	Get(name string) (interface{}, error)
+	Get(name, funcName string) (interface{}, error)
 }
 
 type MapParameters map[string]interface{}
 
-func (p MapParameters) Get(name string) (interface{}, error) {
+func (p MapParameters) Get(name, funcName string) (interface{}, error) {
 
 	value, found := p[name]
 
