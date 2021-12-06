@@ -210,6 +210,18 @@ func (this EvaluableExpression) evaluateStage(stage *evaluationStage, parameters
 
 	if this.ChecksTypes {
 		if stage.typeCheck == nil {
+			if stage.symbol == AND || stage.symbol == OR {
+				if !isBool(left) {
+					if fval, ok := left.(float64); ok {
+						left = fval != 0
+					}
+				}
+				if !isBool(right) {
+					if fval, ok := right.(float64); ok {
+						right = fval != 0
+					}
+				}
+			}
 
 			err = typeCheck(stage.leftTypeCheck, left, stage.symbol, stage.typeErrorFormat)
 			if err != nil {
